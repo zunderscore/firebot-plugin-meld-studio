@@ -1,0 +1,28 @@
+{
+  "name": "firebot-plugin-meld-studio",
+  "scriptOutputName": "firebot-meld-studio",
+  "version": "0.1.0",
+  "description": "A Meld Studio plugin for Firebot",
+  "main": "",
+  "scripts": {
+    "build": "webpack",
+    "build:dev": "npm run build && npm run copy",
+    "copy": "node ./scripts/copy-build.js",
+    "test": "jest"
+  },
+  "author": "zunderscore",
+  "license": "MIT",
+  "devDependencies": {
+    "@crowbartools/firebot-custom-scripts-types": "github:crowbartools/firebot-custom-scripts-types#594c44f5e34dbc6b9af71dbb7a0598db46e5a0a0",
+    "jest": "^30.1.3",
+    "terser-webpack-plugin": "^5.3.14",
+    "ts-jest": "^29.4.1",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.2",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "reconnecting-websocket": "^4.4.0"
+  }
+}
