@@ -5,26 +5,23 @@ import {
 } from "../constants";
 import { MeldRemote } from "../meld/meld-remote";
 
-export const ClipEffect: Effects.EffectType<{}> = {
+export const ShowStagedSceneEffect: Effects.EffectType<{}> = {
     definition: {
-        id: `${PLUGIN_ID}:clip`,
-        name: `${PLUGIN_NAME}: Record Clip`,
-        description: "Record a clip in Meld Studio",
-        icon: "fad fa-film",
+        id: `${PLUGIN_ID}:show-staged-scene`,
+        name: `${PLUGIN_NAME}: Show Staged Scene`,
+        description: "Immediately switches to the staged scene in Meld Studio",
+        icon: "fad fa-tv",
         categories: ["common"]
     },
     optionsTemplate: `
         <eos-container>
-            <div class="effect-info">
-                This will record a clip in Meld Studio
-            </div>
             <div class="effect-info alert alert-warning">
-                <strong>NOTE</strong>: Clipping must be enabled in Meld Studio in order for this to work.
+                <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to immediately switch to the currently staged scene.
             </div>
         </eos-container>
     `,
     onTriggerEvent: async () => {
-        MeldRemote.recordClip();
+        MeldRemote.showReplay();
         return true;
     }
 }

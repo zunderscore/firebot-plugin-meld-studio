@@ -22,13 +22,29 @@ New effects:
 - **Meld Studio: Stop Streaming**
 - **Meld Studio: Start Recording**
 - **Meld Studio: Stop Recording**
+- **Meld Studio: Show Staged Scene**
 - **Meld Studio: Record Clip**
 - **Meld Studio: Take Screenshot**
+- **Meld Studio: Show Replay**
+- **Meld Studio: Dismiss Replay**
+- **Meld Studio: Toggle Virtual Camera**
 
 ## Events
 
 New events:
+- **Meld Studio: Connected**
+- **Meld Studio: Disconnected**
 - **Meld Studio: Streaming Started**
 - **Meld Studio: Streaming Stopped**
 - **Meld Studio: Recording Started**
 - **Meld Studio: Recording Stopped**
+- **Meld Studio: Scene Changed**
+
+## Variables
+
+New variables:
+- `$meldIsConnected`
+- `$meldIsRecording`
+- `$meldIsStreaming`
+- `$meldSceneId`
+- `$meldSceneName`

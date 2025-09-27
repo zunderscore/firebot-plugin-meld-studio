@@ -28,6 +28,7 @@ type MeldStudioSessionScene = MeldStudioSessionItemBase & {
     index: number;
     current: boolean;
     staged: boolean;
+    vertical: boolean;
     parent: never;
 }
 
@@ -64,9 +65,27 @@ type MeldStudioSessionItem =
     | MeldStudioSessionLayer
     | MeldStudioSessionEffect
 
-type MeldStudioSessionItemWithId = MeldStudioSessionItem & {
+type MeldStudioSessionSceneWithId = MeldStudioSessionScene & {
     id: string;
 }
+
+type MeldStudioSessionTrackWithId = MeldStudioSessionTrack & {
+    id: string;
+}
+
+type MeldStudioSessionLayerWithId = MeldStudioSessionLayer & {
+    id: string;
+}
+
+type MeldStudioSessionEffectWithId = MeldStudioSessionEffect & {
+    id: string;
+}
+
+type MeldStudioSessionItemWithId =
+    | MeldStudioSessionSceneWithId
+    | MeldStudioSessionTrackWithId
+    | MeldStudioSessionLayerWithId
+    | MeldStudioSessionEffectWithId
 
 type MeldStudioSession = {
     items: Record<string, MeldStudioSessionItem>;
@@ -121,6 +140,22 @@ type MeldStudio = {
     showStagedScene: () => void;
 
     /**
+     * Toggles visibility of a layer within a scene
+     * @param sceneId ID of the scene
+     * @param layerId ID of the layer
+     * @returns 
+     */
+    toggleLayer: (sceneId: string, layerId: string) => void;
+
+    /**
+     * Toggles the enabled status of an effect within a layer
+     * @param sceneId ID of the scene
+     * @param layerId ID of the layer
+     * @param effectId ID of the effect
+     */
+    toggleEffect: (sceneId: string, layerId: string, effectId: string) => void;
+
+    /**
      * Mutes/unmutes the given track
      * @param trackId ID of the track to mute/unmute
      * @param mute `true` to mute the track, `false` to unmute
@@ -152,6 +187,36 @@ type MeldStudio = {
      * @param command Command to send
      */
     sendCommand: (command: MeldCommand) => void;
+
+    /**
+     * Sends a custom command to a layer
+     * @param layerId ID of the layer
+     * @param command Command to send
+     */
+    callFunction: (layerId: string, command: string) => void;
+
+    /**
+     * Sends a custom command to a layer with the given arguments
+     * @param layerId ID of the layer
+     * @param command Command to send
+     * @param args Arguments to send
+     */
+    callFunctionWithArgs: (layerId: string, command: string, args: any[]) => void;
+
+    /**
+     * Sets the value of the given property
+     * @param objectId ID of the object to update
+     * @param propertyName Name of the property to update
+     * @param value New value for the property
+     */
+    setProperty: (objectId: string, propertyName: string, value: any) => void;
+
+    /**
+     * Triggered any time the contents of `session` change
+     */
+    sessionChanged: {
+        connect: (callback: () => void) => void;
+    }
 
     /**
      * When the recording state has changed

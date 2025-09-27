@@ -5,26 +5,26 @@ import {
 } from "../constants";
 import { MeldRemote } from "../meld/meld-remote";
 
-export const ClipEffect: Effects.EffectType<{}> = {
+export const ToggleVirtualCameraEffect: Effects.EffectType<{}> = {
     definition: {
-        id: `${PLUGIN_ID}:clip`,
-        name: `${PLUGIN_NAME}: Record Clip`,
-        description: "Record a clip in Meld Studio",
-        icon: "fad fa-film",
+        id: `${PLUGIN_ID}:toggle-virtual-camera`,
+        name: `${PLUGIN_NAME}: Toggle Virtual Camera`,
+        description: "Toggles the virtual camera in Meld Studio",
+        icon: "fad fa-camera",
         categories: ["common"]
     },
     optionsTemplate: `
         <eos-container>
             <div class="effect-info">
-                This will record a clip in Meld Studio
+                This will toggle the virtual camera state in Meld Studio.
             </div>
             <div class="effect-info alert alert-warning">
-                <strong>NOTE</strong>: Clipping must be enabled in Meld Studio in order for this to work.
+                <strong>NOTE</strong>: The Virtual Camera must be installed in Meld Studio in order for this to work.
             </div>
         </eos-container>
     `,
     onTriggerEvent: async () => {
-        MeldRemote.recordClip();
+        MeldRemote.toggleVirtualCamera();
         return true;
     }
 }
