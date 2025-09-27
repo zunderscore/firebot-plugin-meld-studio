@@ -97,6 +97,65 @@ class MeldRemote {
         PluginLogger.logDebug("Toggling recording state");
         this._meld.sendCommand("meld.toggleRecordingAction");
     }
+
+    takeScreenshot(vertical = false): void {
+        if (vertical === true) {
+            PluginLogger.logDebug("Taking vertical screenshot");
+            this._meld.sendCommand("meld.screenshot.vertical");
+        } else {
+            PluginLogger.logDebug("Taking screenshot");
+            this._meld.sendCommand("meld.screenshot");
+        }
+    }
+
+    recordClip(): void {
+        PluginLogger.logDebug("Recording clip");
+        this._meld.sendCommand("meld.recordClip");
+    }
+
+    toggleVirtualCamera(): void {
+        PluginLogger.logDebug("Toggling virtual camera");
+        this._meld.sendCommand("meld.toggleVirtualCameraAction");
+    }
+
+    showReplay(): void {
+        PluginLogger.logDebug("Showing replay");
+        this._meld.sendCommand("meld.replay.show");
+    }
+
+    dismissReplay(): void {
+        PluginLogger.logDebug("Dismissing replay");
+        this._meld.sendCommand("meld.replay.dismiss");
+    }
+
+    getSessionItems(type?: MeldStudioSessionItemType): MeldStudioSessionItemWithId[] {
+        const items = Object.entries(this._meld.session.items)
+            .map((item) => ({
+                id: item[0],
+                ...item[1]
+            }));
+
+        if (type != null) {
+            return items.filter(i => i.type === type);
+        }
+
+        return items;
+    }
+
+    getImageSources(): MeldStudioSessionItemWithId[] {
+        return this.getSessionItems("layer")
+            .filter(i => (i as MeldStudioSessionLayer).source != null);
+    }
+
+    getMediaSources(): MeldStudioSessionItemWithId[] {
+        return this.getSessionItems("layer")
+            .filter(i => (i as MeldStudioSessionLayer).mediaSource != null);
+    }
+
+    getBrowserSources(): MeldStudioSessionItemWithId[] {
+        return this.getSessionItems("layer")
+            .filter(i => (i as MeldStudioSessionLayer).url != null);
+    }
 }
 
 const meldRemote = new MeldRemote();

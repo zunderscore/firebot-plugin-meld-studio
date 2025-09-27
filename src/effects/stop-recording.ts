@@ -11,13 +11,13 @@ export const StopRecordingEffect: Effects.EffectType<{}> = {
         name: `${PLUGIN_NAME}: Stop Recording`,
         description: "Stop recording in Meld Studio",
         icon: "fad fa-video-slash",
-        categories: ["integrations", "scripting"]
+        categories: ["common"]
     },
     optionsTemplate: `
     <eos-container>
-      <div class="effect-info alert alert-warning">
-        <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to stop recording.
-      </div>
+        <div class="effect-info alert alert-warning">
+            <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to stop recording.
+        </div>
     </eos-container>
     `,
     onTriggerEvent: async () => {

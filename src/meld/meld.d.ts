@@ -12,6 +12,66 @@ type MeldCommand =
     | "meld.replay.show"
     | "meld.replay.dismiss"
 
+type MeldStudioSessionItemType =
+    | "scene"
+    | "track"
+    | "layer"
+    | "effect";
+
+type MeldStudioSessionItemBase = {
+    type: MeldStudioSessionItemType;
+    name: string;
+}
+
+type MeldStudioSessionScene = MeldStudioSessionItemBase & {
+    type: "scene";
+    index: number;
+    current: boolean;
+    staged: boolean;
+    parent: never;
+}
+
+type MeldStudioSessionTrack = MeldStudioSessionItemBase & {
+    type: "track";
+    parent?: string;
+    monitoring: boolean;
+    muted: boolean;
+}
+
+type MeldStudioSessionLayer = MeldStudioSessionItemBase & {
+    type: "layer";
+    parent: string;
+    index: number;
+    visible: boolean;
+    height: number;
+    width: number;
+    x: number;
+    y: number;
+    source: string;
+    url: string;
+    mediaSource: string;
+}
+
+type MeldStudioSessionEffect = MeldStudioSessionItemBase & {
+    type: "effect";
+    parent: string;
+    enabled: boolean;
+}
+
+type MeldStudioSessionItem =
+    | MeldStudioSessionScene
+    | MeldStudioSessionTrack
+    | MeldStudioSessionLayer
+    | MeldStudioSessionEffect
+
+type MeldStudioSessionItemWithId = MeldStudioSessionItem & {
+    id: string;
+}
+
+type MeldStudioSession = {
+    items: Record<string, MeldStudioSessionItem>;
+}
+
 type MeldStudio = {
     /**
      * Meld Studio API version
@@ -27,6 +87,11 @@ type MeldStudio = {
      * Whether or not Meld Studio is currently streaming
      */
     isStreaming: boolean;
+
+    /**
+     * Represents the current session state detailing scenes, tracks, layers, and effects
+     */
+    session: MeldStudioSession;
 
     /**
      * Toggle the current recording state

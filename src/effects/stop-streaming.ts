@@ -11,13 +11,13 @@ export const StopStreamingEffect: Effects.EffectType<{}> = {
         name: `${PLUGIN_NAME}: Stop Streaming`,
         description: "Stop streaming in Meld Studio",
         icon: "fad fa-stop-circle",
-        categories: ["integrations", "scripting"]
+        categories: ["common"]
     },
     optionsTemplate: `
     <eos-container>
-      <div class="effect-info alert alert-warning">
-        <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to stop streaming.
-      </div>
+        <div class="effect-info alert alert-warning">
+            <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to stop streaming.
+        </div>
     </eos-container>
     `,
     onTriggerEvent: async () => {

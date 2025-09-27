@@ -11,13 +11,13 @@ export const StartStreamingEffect: Effects.EffectType<{}> = {
         name: `${PLUGIN_NAME}: Start Streaming`,
         description: "Start streaming in Meld Studio",
         icon: "fad fa-play-circle",
-        categories: ["integrations", "scripting"]
+        categories: ["common"]
     },
     optionsTemplate: `
     <eos-container>
-      <div class="effect-info alert alert-warning">
-        <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to start streaming.
-      </div>
+        <div class="effect-info alert alert-warning">
+            <b>Warning!</b> When this effect is activated, Firebot will tell Meld Studio to start streaming.
+        </div>
     </eos-container>
     `,
     onTriggerEvent: async () => {
