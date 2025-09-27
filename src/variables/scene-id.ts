@@ -6,7 +6,7 @@ import { MeldRemote } from "../meld/meld-remote";
 export const SceneIdVariable: ReplaceVariable = {
     definition: {
         handle: `${VARIABLE_PREFIX}SceneId`,
-        description: "The ID of the current scene in Meld Studio, or 'Unknown' if Meld Studio isn't running/connected.",
+        description: "The ID of the active scene in Meld Studio, or 'Unknown' if Meld Studio isn't running/connected.",
         possibleDataOutput: [ "text" ],
         categories: [ "common" ],
         triggers: {
@@ -17,6 +17,6 @@ export const SceneIdVariable: ReplaceVariable = {
         }
     },
     evaluator: async (trigger) => {
-        return MeldRemote.getCurrentScene()?.id ?? "Unknown";
+        return MeldRemote.getActiveScene()?.id ?? "Unknown";
     }
 };

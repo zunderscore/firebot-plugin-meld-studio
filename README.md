@@ -22,6 +22,8 @@ New effects:
 - **Meld Studio: Stop Streaming**
 - **Meld Studio: Start Recording**
 - **Meld Studio: Stop Recording**
+- **Meld Studio: Show Scene**
+- **Meld Studio: Stage Scene**
 - **Meld Studio: Show Staged Scene**
 - **Meld Studio: Record Clip**
 - **Meld Studio: Take Screenshot**
@@ -39,6 +41,10 @@ New events:
 - **Meld Studio: Recording Started**
 - **Meld Studio: Recording Stopped**
 - **Meld Studio: Scene Changed**
+- **Meld Studio: Staged Scene Changed**
+- **Meld Studio: Track Muted**
+- **Meld Studio: Track Unmuted**
+- **Meld Studio: Track Gain Changed**
 
 ## Variables
 
@@ -48,3 +54,8 @@ New variables:
 - `$meldIsStreaming`
 - `$meldSceneId`
 - `$meldSceneName`
+- `$meldStagedSceneId`
+- `$meldStagedSceneName`
+- `$meldTrackGain`
+- `$meldTrackId`
+- `$meldTrackName`

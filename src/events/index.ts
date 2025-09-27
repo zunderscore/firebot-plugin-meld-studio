@@ -9,6 +9,10 @@ import {
     RECORDING_STARTED_EVENT_ID,
     RECORDING_STOPPED_EVENT_ID,
     SCENE_CHANGED_EVENT_ID,
+    STAGED_SCENE_CHANGED_EVENT_ID,
+    TRACK_MUTED_EVENT_ID,
+    TRACK_UNMUTED_EVENT_ID,
+    TRACK_GAIN_CHANGED_EVENT_ID,
 } from "../constants";
 
 export const MeldEventSource: EventSource = {
@@ -49,6 +53,26 @@ export const MeldEventSource: EventSource = {
             id: SCENE_CHANGED_EVENT_ID,
             name: `${PLUGIN_NAME}: Scene Changed`,
             description: "When the scene is changed in Meld Studio"
+        },
+        {
+            id: STAGED_SCENE_CHANGED_EVENT_ID,
+            name: `${PLUGIN_NAME}: Staged Scene Changed`,
+            description: "When the staged scene is changed in Meld Studio"
+        },
+        {
+            id: TRACK_MUTED_EVENT_ID,
+            name: `${PLUGIN_NAME}: Track Muted`,
+            description: "When a track is muted in Meld Studio"
+        },
+        {
+            id: TRACK_UNMUTED_EVENT_ID,
+            name: `${PLUGIN_NAME}: Track Unmuted`,
+            description: "When a track is unmuted in Meld Studio"
+        },
+        {
+            id: TRACK_GAIN_CHANGED_EVENT_ID,
+            name: `${PLUGIN_NAME}: Track Gain Changed`,
+            description: "When a track's gain (volume) changes in Meld Studio"
         },
     ]
 }

@@ -4,13 +4,17 @@ import { PluginLogger } from "../plugin-logger";
 import { QWebChannel } from "./qwebchannel";
 import {
     EVENT_SOURCE_ID,
+    CONNECTED_EVENT_ID,
+    DISCONNECTED_EVENT_ID,
     STREAMING_STARTED_EVENT_ID,
     STREAMING_STOPPED_EVENT_ID,
     RECORDING_STARTED_EVENT_ID,
     RECORDING_STOPPED_EVENT_ID,
     SCENE_CHANGED_EVENT_ID,
-    CONNECTED_EVENT_ID,
-    DISCONNECTED_EVENT_ID,
+    STAGED_SCENE_CHANGED_EVENT_ID,
+    TRACK_MUTED_EVENT_ID,
+    TRACK_UNMUTED_EVENT_ID,
+    TRACK_GAIN_CHANGED_EVENT_ID,
 } from "../constants";
 
 interface RemoteParams {
@@ -78,6 +82,13 @@ class MeldRemote {
         };
     }
 
+    shutdown(): void {
+        this._webChannel = undefined;
+        this._ws.close();
+        this._ws = undefined;
+        this.meld = undefined;
+    }
+
     setupListeners(): void {
         this.meld.sessionChanged.connect(() => {
             PluginLogger.logDebug("Received SessionChanged event from Meld");
@@ -85,17 +96,51 @@ class MeldRemote {
             // Build new session object
             const newSessionObject = this.buildSessionItemObject(this.meld.session.items);
 
-            // Check for new scene
-            const newCurrentScene = this.getCurrentScene();
-            const previousCurrentScene = this._cachedSessionItems
+            // Check for new active scene
+            const newActiveScene = this.getActiveScene();
+            const previousActiveScene = this._cachedSessionItems
                 .find(i => i.type === "scene" && i.current === true);
-            if (newCurrentScene.id !== previousCurrentScene?.id
+            if (newActiveScene.id !== previousActiveScene?.id
             ) {
                 this._eventManager.triggerEvent(
                     EVENT_SOURCE_ID,
                     SCENE_CHANGED_EVENT_ID,
                     { }
                 )
+            }
+
+            // Check for new staged scene
+            const newStagedScene = this.getStagedScene();
+            const previousStagedScene = this._cachedSessionItems
+                .find(i => i.type === "scene" && i.staged === true);
+
+            if ((newStagedScene && !previousStagedScene)
+                || (!newStagedScene && previousStagedScene)
+                && newStagedScene?.id !== previousStagedScene?.id
+            ) {
+                this._eventManager.triggerEvent(
+                    EVENT_SOURCE_ID,
+                    STAGED_SCENE_CHANGED_EVENT_ID,
+                    { }
+                )
+            }
+
+            // Check for muted/unmuted tracks
+            for (const track of newSessionObject.filter(t => t.type === "track"))
+            {
+                const existingTrack = this._cachedSessionItems
+                    .find(t => t.id === track.id) as MeldStudioSessionTrackWithId;
+                
+                if (existingTrack && existingTrack.muted !== track.muted) {
+                    this._eventManager.triggerEvent(
+                        EVENT_SOURCE_ID,
+                        track.muted === true ? TRACK_MUTED_EVENT_ID : TRACK_UNMUTED_EVENT_ID,
+                        {
+                            trackName: track.name,
+                            trackId: track.id
+                        }
+                    )
+                }
             }
 
             // Copy session data to the cache
@@ -117,6 +162,20 @@ class MeldRemote {
                 EVENT_SOURCE_ID,
                 this.meld.isRecording === true ? RECORDING_STARTED_EVENT_ID : RECORDING_STOPPED_EVENT_ID,
                 { }
+            );
+        });
+
+        this.meld.gainUpdated.connect((trackId, gain) => {
+            const track = this.getSessionItems("track").find(t => t.id === trackId);
+
+            this._eventManager.triggerEvent(
+                EVENT_SOURCE_ID,
+                TRACK_GAIN_CHANGED_EVENT_ID,
+                {
+                    trackName: track?.name,
+                    trackId,
+                    gain
+                }
             );
         });
     }
@@ -297,9 +356,14 @@ class MeldRemote {
             .filter(i => (i as MeldStudioSessionLayer).url != null);
     }
 
-    getCurrentScene(): MeldStudioSessionSceneWithId {
+    getActiveScene(): MeldStudioSessionSceneWithId {
         return this.getSessionItems("scene")
             .find(s => (s as MeldStudioSessionSceneWithId).current === true) as MeldStudioSessionSceneWithId;
+    }
+
+    getStagedScene(): MeldStudioSessionSceneWithId {
+        return this.getSessionItems("scene")
+            .find(s => (s as MeldStudioSessionSceneWithId).staged === true) as MeldStudioSessionSceneWithId;
     }
 
     getSceneLayers(sceneId: string): MeldStudioSessionLayerWithId[] {

@@ -8,6 +8,7 @@ import {
     GET_MEDIA_LAYERS_FRONTEND_COMMAND,
     GET_BROWSER_LAYERS_FRONTEND_COMMAND,
     GET_AUDIO_TRACKS_FRONTEND_COMMAND,
+    GET_CONNECTED_FRONTEND_COMMAND,
 } from "./constants";
 
 const registeredFrontendListeners: { id: string, eventName: string }[] = [];
@@ -32,6 +33,10 @@ function registerAsyncFrontendListener(
 export function registerFrontendListeners(
     frontendCommunicator: ScriptModules["frontendCommunicator"]
 ) {
+    registerFrontendListener(frontendCommunicator, GET_CONNECTED_FRONTEND_COMMAND,
+        () => MeldRemote.isConnected()
+    );
+
     registerFrontendListener(frontendCommunicator, GET_SCENE_LIST_FRONTEND_COMMAND,
         () => MeldRemote.getSessionItems("scene")
     );

@@ -12,7 +12,12 @@ export const STREAMING_STOPPED_EVENT_ID = "streaming-stopped";
 export const RECORDING_STARTED_EVENT_ID = "recording-started";
 export const RECORDING_STOPPED_EVENT_ID = "recording-stopped";
 export const SCENE_CHANGED_EVENT_ID = "scene-changed";
+export const STAGED_SCENE_CHANGED_EVENT_ID = "staged-scene-changed";
+export const TRACK_MUTED_EVENT_ID = "track-muted";
+export const TRACK_UNMUTED_EVENT_ID = "track-unmuted";
+export const TRACK_GAIN_CHANGED_EVENT_ID = "track-gain-changed";
 
+export const GET_CONNECTED_FRONTEND_COMMAND = `${PLUGIN_ID}:get-connected`;
 export const GET_SCENE_LIST_FRONTEND_COMMAND = `${PLUGIN_ID}:get-scene-list`;
 export const GET_LAYER_LIST_FRONTEND_COMMAND = `${PLUGIN_ID}:get-layer-list`;
 export const GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND = `${PLUGIN_ID}:get-layer-list-for-scene`;

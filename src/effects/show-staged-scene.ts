@@ -9,7 +9,7 @@ export const ShowStagedSceneEffect: Effects.EffectType<{}> = {
     definition: {
         id: `${PLUGIN_ID}:show-staged-scene`,
         name: `${PLUGIN_NAME}: Show Staged Scene`,
-        description: "Immediately switches to the staged scene in Meld Studio",
+        description: "Immediately switches to the staged scene in Meld Studio, if one is staged",
         icon: "fad fa-tv",
         categories: ["common"]
     },
@@ -21,7 +21,7 @@ export const ShowStagedSceneEffect: Effects.EffectType<{}> = {
         </eos-container>
     `,
     onTriggerEvent: async () => {
-        MeldRemote.showReplay();
+        MeldRemote.showStagedScene();
         return true;
     }
 }

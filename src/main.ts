@@ -83,6 +83,9 @@ const script: Firebot.CustomScript<{
     stop: (uninstalling) => {
         PluginLogger.logDebug(`Stopping ${PLUGIN_NAME} plugin...`);
 
+        PluginLogger.logDebug("Shutting down Meld connection...");
+        MeldRemote.shutdown();
+
         PluginLogger.logDebug("Unregistering events...");
         eventManager.unregisterEventSource(EVENT_SOURCE_ID);
         
