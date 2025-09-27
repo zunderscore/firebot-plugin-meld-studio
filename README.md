@@ -22,6 +22,8 @@ New effects:
 - **Meld Studio: Stop Streaming**
 - **Meld Studio: Start Recording**
 - **Meld Studio: Stop Recording**
+- **Meld Studio: Record Clip**
+- **Meld Studio: Take Screenshot**
 
 ## Events
 
