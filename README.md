@@ -30,6 +30,7 @@ New effects:
 - **Meld Studio: Show Replay**
 - **Meld Studio: Dismiss Replay**
 - **Meld Studio: Toggle Virtual Camera**
+- **Meld Studio: Toggle Track Mute**
 
 ## Events
 
