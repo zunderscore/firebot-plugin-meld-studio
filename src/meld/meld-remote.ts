@@ -361,6 +361,11 @@ class MeldRemote {
         this.meld.setProperty(objectId, "visible", visible);
     }
 
+    toggleLayerVisibility(sceneId: string, layerId: string): void {
+        PluginLogger.logDebug(`Toggling visibility for layer ID ${layerId} in scene ID ${sceneId}`);
+        this.meld.toggleLayer(sceneId, layerId);
+    }
+
     setProperty(objectId: string, propertyName: string, value: any) {
         PluginLogger.logDebug(`Setting object ${objectId} property ${propertyName} to ${value}`);
         this.meld.setProperty(objectId, propertyName, value);
@@ -403,6 +408,16 @@ class MeldRemote {
     getStagedScene(): MeldStudioSessionSceneWithId {
         return this.getSessionItems("scene")
             .find(s => (s as MeldStudioSessionSceneWithId).staged === true) as MeldStudioSessionSceneWithId;
+    }
+
+    getScenesWithLayers(): MeldStudioSceneWithLayers[] {
+        const scenes = this.getSessionItems("scene") as MeldStudioSceneWithLayers[];
+
+        for (const scene of scenes) {
+            scene.layers = this.getSceneLayers(scene.id);
+        }
+
+        return scenes;
     }
 
     getSceneLayers(sceneId: string): MeldStudioSessionLayerWithId[] {

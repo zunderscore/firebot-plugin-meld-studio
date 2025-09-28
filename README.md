@@ -29,8 +29,9 @@ New effects:
 - **Meld Studio: Take Screenshot**
 - **Meld Studio: Show Replay**
 - **Meld Studio: Dismiss Replay**
-- **Meld Studio: Toggle Virtual Camera**
+- **Meld Studio: Toggle Layer Visibility**
 - **Meld Studio: Toggle Track Mute**
+- **Meld Studio: Toggle Virtual Camera**
 
 ## Events
 

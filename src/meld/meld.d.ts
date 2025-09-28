@@ -87,6 +87,10 @@ type MeldStudioSessionItemWithId =
     | MeldStudioSessionLayerWithId
     | MeldStudioSessionEffectWithId
 
+type MeldStudioSceneWithLayers = MeldStudioSessionSceneWithId & {
+    layers?: MeldStudioSessionLayerWithId[];
+}
+
 type MeldStudioSession = {
     items: Record<string, MeldStudioSessionItem>;
 }

@@ -2,6 +2,7 @@ import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { MeldRemote } from "./meld/meld-remote";
 import {
     GET_SCENE_LIST_FRONTEND_COMMAND,
+    GET_SCENE_LIST_WITH_LAYERS_FRONTEND_COMMAND,
     GET_LAYER_LIST_FRONTEND_COMMAND,
     GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND,
     GET_TRACK_LIST_FRONTEND_COMMAND,
@@ -40,6 +41,10 @@ export function registerFrontendListeners(
 
     registerFrontendListener(frontendCommunicator, GET_SCENE_LIST_FRONTEND_COMMAND,
         () => MeldRemote.getSessionItems("scene")
+    );
+
+    registerFrontendListener(frontendCommunicator, GET_SCENE_LIST_WITH_LAYERS_FRONTEND_COMMAND,
+        () => MeldRemote.getScenesWithLayers()
     );
 
     registerFrontendListener(frontendCommunicator, GET_LAYER_LIST_FRONTEND_COMMAND,

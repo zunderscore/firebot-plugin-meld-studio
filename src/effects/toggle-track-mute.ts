@@ -6,9 +6,9 @@ import {
 import { MeldRemote } from "../meld/meld-remote";
 
 interface EffectSource {
-    trackName: string,
-    trackId: string,
-    action: "toggle" | boolean
+    trackName: string;
+    trackId: string;
+    action: boolean | "toggle";
 }
 
 export const ToggleTrackMuteEffect: Effects.EffectType<{
