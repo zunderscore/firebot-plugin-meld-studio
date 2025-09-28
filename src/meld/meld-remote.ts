@@ -30,6 +30,7 @@ class MeldRemote {
     private _webChannel: QWebChannel;
     private _eventManager: ScriptModules["eventManager"];
     private _cachedSessionItems: MeldStudioSessionItemWithId[];
+    private _shuttingDown = false;
     
     meld: MeldStudio;
 
@@ -54,7 +55,7 @@ class MeldRemote {
         this._ws = new ReconnectingWebSocket(() => `ws://${this._ipAddress}:${this._port}`);
 
         this._ws.onclose = () => {
-            if (this._connected === true) {
+            if (this._shuttingDown !== true && this._connected === true) {
                 this._connected = false;
                 this._eventManager.triggerEvent(
                     EVENT_SOURCE_ID,
@@ -83,6 +84,7 @@ class MeldRemote {
     }
 
     shutdown(): void {
+        this._shuttingDown = true;
         this._webChannel = undefined;
         this._ws.close();
         this._ws = undefined;
@@ -165,7 +167,8 @@ class MeldRemote {
             );
         });
 
-        this.meld.gainUpdated.connect((trackId, gain) => {
+        this.meld.gainUpdated.connect((trackId, gain, muted) => {
+            PluginLogger.logDebug("Received GainUpdated event from Meld");
             const track = this.getSessionItems("track").find(t => t.id === trackId);
 
             this._eventManager.triggerEvent(

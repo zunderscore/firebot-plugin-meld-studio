@@ -69,11 +69,6 @@ export const MeldEventSource: EventSource = {
             name: `${PLUGIN_NAME}: Track Unmuted`,
             description: "When a track is unmuted in Meld Studio"
         },
-        {
-            id: TRACK_GAIN_CHANGED_EVENT_ID,
-            name: `${PLUGIN_NAME}: Track Gain Changed`,
-            description: "When a track's gain (volume) changes in Meld Studio"
-        },
     ]
 }
 
