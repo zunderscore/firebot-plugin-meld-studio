@@ -14,7 +14,7 @@ import {
     STAGED_SCENE_CHANGED_EVENT_ID,
     TRACK_MUTED_EVENT_ID,
     TRACK_UNMUTED_EVENT_ID,
-    TRACK_GAIN_CHANGED_EVENT_ID,
+    TRACK_VOLUME_CHANGED_EVENT_ID,
 } from "../constants";
 
 interface RemoteParams {
@@ -107,7 +107,9 @@ class MeldRemote {
                 this._eventManager.triggerEvent(
                     EVENT_SOURCE_ID,
                     SCENE_CHANGED_EVENT_ID,
-                    { }
+                    {
+                        scene: newActiveScene
+                    }
                 )
             }
 
@@ -123,7 +125,9 @@ class MeldRemote {
                 this._eventManager.triggerEvent(
                     EVENT_SOURCE_ID,
                     STAGED_SCENE_CHANGED_EVENT_ID,
-                    { }
+                    {
+                        scene: newStagedScene
+                    }
                 )
             }
 
@@ -173,11 +177,11 @@ class MeldRemote {
 
             this._eventManager.triggerEvent(
                 EVENT_SOURCE_ID,
-                TRACK_GAIN_CHANGED_EVENT_ID,
+                TRACK_VOLUME_CHANGED_EVENT_ID,
                 {
                     trackName: track?.name,
                     trackId,
-                    gain
+                    volume: gain
                 }
             );
         });

@@ -45,7 +45,13 @@ New events:
 - **Meld Studio: Staged Scene Changed**
 - **Meld Studio: Track Muted**
 - **Meld Studio: Track Unmuted**
-- **Meld Studio: Track Gain Changed**
+- **Meld Studio: Track Volume Changed**
+
+## Event Filters
+
+New filters:
+- **Meld Studio Scene Name**
+- **Meld Studio Track Name**
 
 ## Variables
 
@@ -57,6 +63,6 @@ New variables:
 - `$meldSceneName`
 - `$meldStagedSceneId`
 - `$meldStagedSceneName`
-- `$meldTrackGain`
 - `$meldTrackId`
 - `$meldTrackName`
+- `$meldTrackVolume`

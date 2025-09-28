@@ -1,7 +1,7 @@
 {
   "name": "firebot-plugin-meld-studio",
   "scriptOutputName": "firebot-meld-studio",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A Meld Studio plugin for Firebot",
   "main": "",
   "scripts": {

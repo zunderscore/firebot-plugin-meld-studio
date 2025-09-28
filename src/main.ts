@@ -11,12 +11,14 @@ import {
 import { MeldEventSource } from "./events";
 import { MeldVariables } from "./variables";
 import { MeldEffects } from "./effects";
+import { MeldFilters } from "./filters";
 
 const packageInfo = require("../package.json");
 
 let eventManager: ScriptModules["eventManager"];
 let replaceVariableManager: ScriptModules["replaceVariableManager"];
 let effectManager: ScriptModules["effectManager"];
+let eventFilterManager: ScriptModules["eventFilterManager"]
 let frontendCommunicator: ScriptModules["frontendCommunicator"];
 
 const script: Firebot.CustomScript<{
@@ -53,6 +55,7 @@ const script: Firebot.CustomScript<{
         ({
             effectManager,
             eventManager,
+            eventFilterManager,
             frontendCommunicator,
             replaceVariableManager
         } = modules);
@@ -74,6 +77,11 @@ const script: Firebot.CustomScript<{
 
         PluginLogger.logDebug("Registering events...");
         eventManager.registerEventSource(MeldEventSource);
+
+        PluginLogger.logDebug("Registering filters...");
+        for (const filter of MeldFilters) {
+            eventFilterManager.registerFilter(filter);
+        }
         
         PluginLogger.logDebug("Setting up Meld connection...");
         MeldRemote.setupRemote(eventManager, parameters);
@@ -85,6 +93,11 @@ const script: Firebot.CustomScript<{
 
         PluginLogger.logDebug("Shutting down Meld connection...");
         MeldRemote.shutdown();
+
+        PluginLogger.logDebug("Unregistering filters...");
+        for (const filter of MeldFilters) {
+            eventFilterManager.unregisterFilter(filter.id);
+        }
 
         PluginLogger.logDebug("Unregistering events...");
         eventManager.unregisterEventSource(EVENT_SOURCE_ID);

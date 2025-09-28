@@ -30,7 +30,7 @@ export class QWebChannel {
             if (typeof response === "string"
                 && response.match(
                     /^-?\d+-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?([-+\u2212](\d{2}):(\d{2})|Z)?$/)) {
-                let date = new Date(response);
+                const date = new Date(response);
                 if (!isNaN(date?.getTime()))
                     return date;
             }
@@ -44,16 +44,16 @@ export class QWebChannel {
         converters?: any
     ) {
         if (typeof transport !== "object" || typeof transport.send !== "function") {
-            PluginLogger.logError("The QWebChannel expects a transport object with a send function and onmessage callback property." +
-                " Given is: transport: " + typeof (transport) + ", transport.send: " + typeof (transport.send));
+            PluginLogger.logError(`The QWebChannel expects a transport object with a send function and onmessage callback property. Given is: transport: ${typeof (transport)}, transport.send: ${typeof (transport.send)}`);
             return;
         }
 
         this.transport = transport;
 
         if (Array.isArray(converters)) {
-            for (const converter of converters)
+            for (const converter of converters) {
                 this.addConverter(converter);
+            }
         } else if (converters !== undefined) {
             this.addConverter(converters);
         }
@@ -98,15 +98,15 @@ export class QWebChannel {
 
     addConverter(converter: any) {
         if (typeof converter === "string") {
-            if (this.converterRegistry.hasOwnProperty(converter))
+            if (this.converterRegistry.hasOwnProperty(converter)) {
                 this.usedConverters.push(this.converterRegistry[converter]);
-
-            else
-                PluginLogger.logError("Converter '" + converter + "' not found");
+            } else {
+                PluginLogger.logError(`Converter '${converter}' not found`);
+            }
         } else if (typeof converter === "function") {
             this.usedConverters.push(converter);
         } else {
-            PluginLogger.logError("Invalid converter object type " + typeof converter);
+            PluginLogger.logError(`Invalid converter object type ${typeof converter}`);
         }
     }
 
@@ -128,7 +128,7 @@ export class QWebChannel {
             this.execId = Number.MIN_VALUE;
         }
         if (data.hasOwnProperty("id")) {
-            PluginLogger.logError("Cannot exec message with property id: " + JSON.stringify(data));
+            PluginLogger.logError(`Cannot exec message with property id: ${JSON.stringify(data)}`);
             return;
         }
         data.id = this.execId++;
@@ -137,11 +137,11 @@ export class QWebChannel {
     }
 
     handleSignal(message: any) {
-        let object = this.objects[message.object];
+        const object = this.objects[message.object];
         if (object) {
             object.signalEmitted(message.signal, message.args);
         } else {
-            PluginLogger.logWarn("Unhandled signal: " + message.object + "::" + message.signal);
+            PluginLogger.logWarn(`Unhandled signal: ${message.object}::${message.signal}`);
         }
     }
 
@@ -156,11 +156,11 @@ export class QWebChannel {
 
     handlePropertyUpdate(message: any) {
         message.data.forEach((data: any) => {
-            let object = this.objects[data.object];
+            const object = this.objects[data.object];
             if (object) {
                 object.propertyUpdate(data.signals, data.properties);
             } else {
-                PluginLogger.logWarn("Unhandled property update: " + data.object + "::" + data.signal);
+                PluginLogger.logWarn(`Unhandled property update: ${data.object}::${data.signal}`);
             }
         });
         this.exec({ type: QWebChannelMessageTypes.idle });
@@ -185,23 +185,23 @@ class QObject {
         webChannel.objects[name] = this;
 
         data.methods.forEach((methodData: any) => {
-            let methodName = methodData[0];
-            let methodIdx = methodData[1];
+            const methodName = methodData[0];
+            const methodIdx = methodData[1];
 
             // Fully specified methods are invoked by id, others by name for host-side overload resolution
-            let invokedMethod = methodName[methodName.length - 1] === ')' ? methodIdx : methodName;
+            const invokedMethod = methodName[methodName.length - 1] === ')' ? methodIdx : methodName;
 
             this[methodName] = (...rawArgs: any[]): any => {
-                let args = [];
+                const args = [];
                 let callback: (value: unknown) => void;
                 let errCallback: (reason?: any) => void;
                 for (let i = 0; i < rawArgs.length; ++i) {
-                    let argument = rawArgs[i];
-                    if (typeof argument === "function")
+                    const argument = rawArgs[i];
+                    if (typeof argument === "function") {
                         callback = argument;
-
-                    else
+                    } else {
                         args.push(argument);
+                    }
                 }
 
                 let result;
@@ -222,7 +222,7 @@ class QObject {
                     "args": args
                 }, (response: any) => {
                     if (response !== undefined) {
-                        let result = this.unwrapQObject(response);
+                        const result = this.unwrapQObject(response);
                         if (callback) {
                             (callback)(result);
                         }
@@ -236,9 +236,9 @@ class QObject {
         });
 
         data.properties.forEach((propertyInfo: any) => {
-            let propertyIndex = propertyInfo[0];
-            let propertyName = propertyInfo[1];
-            let notifySignalData = propertyInfo[2];
+            const propertyIndex = propertyInfo[0];
+            const propertyName = propertyInfo[1];
+            const notifySignalData = propertyInfo[2];
             // initialize property cache with current value
             // NOTE: if this is an object, it is not directly unwrapped as it might
             // reference other QObject that we do not know yet
@@ -247,7 +247,7 @@ class QObject {
             if (notifySignalData) {
                 if (notifySignalData[0] === 1) {
                     // signal name is optimized away, reconstruct the actual name
-                    notifySignalData[0] = propertyName + "Changed";
+                    notifySignalData[0] = `${propertyName}Changed`;
                 }
                 this.addSignal(notifySignalData, true);
             }
@@ -255,21 +255,21 @@ class QObject {
             Object.defineProperty(this, propertyName, {
                 configurable: true,
                 get: () => {
-                    let propertyValue = this.__propertyCache__[propertyIndex];
+                    const propertyValue = this.__propertyCache__[propertyIndex];
                     if (propertyValue === undefined) {
                         // This shouldn't happen
-                        PluginLogger.logWarn("Undefined value in property cache for property \"" + propertyName + "\" in object " + this.__id__);
+                        PluginLogger.logWarn(`Undefined value in property cache for property \"${propertyName}\" in object ${this.__id__}`);
                     }
 
                     return propertyValue;
                 },
                 set: (value) => {
                     if (value === undefined) {
-                        PluginLogger.logWarn("Property setter for " + propertyName + " called with undefined value!");
+                        PluginLogger.logWarn(`Property setter for ${propertyName} called with undefined value!`);
                         return;
                     }
                     this.__propertyCache__[propertyIndex] = value;
-                    let valueToSend = value;
+                    const valueToSend = value;
                     this.webChannel.exec({
                         "type": QWebChannelMessageTypes.setProperty,
                         "object": this.__id__,
@@ -280,7 +280,9 @@ class QObject {
             });
         });
 
-        data.signals.forEach((signal: any) => { this.addSignal(signal, false); });
+        data.signals.forEach((signal: any) => { 
+            this.addSignal(signal, false);
+        });
 
         Object.assign(this, data.enums);
     }
@@ -294,7 +296,7 @@ class QObject {
     propertyUpdate(signals: any, propertyMap: any) {
         // update property cache
         for (const propertyIndex of Object.keys(propertyMap)) {
-            let propertyValue = propertyMap[propertyIndex];
+            const propertyValue = propertyMap[propertyIndex];
             this.__propertyCache__[propertyIndex] = this.unwrapQObject(propertyValue);
         }
 
@@ -306,117 +308,117 @@ class QObject {
     }
 
     private addSignal(signalData: any, isPropertyNotifySignal: boolean) {
-            let signalName = signalData[0];
-            let signalIndex = signalData[1];
-            this[signalName] = {
-                connect: (callback: any) => {
-                    if (typeof (callback) !== "function") {
-                        PluginLogger.logError("Bad callback given to connect to signal " + signalName);
-                        return;
-                    }
-
-                    this.__objectSignals__[signalIndex] = this.__objectSignals__[signalIndex] || [];
-                    this.__objectSignals__[signalIndex].push(callback);
-
-                    // only required for "pure" signals, handled separately for properties in propertyUpdate
-                    if (isPropertyNotifySignal)
-                        return;
-
-                    // also note that we always get notified about the destroyed signal
-                    if (signalName === "destroyed" || signalName === "destroyed()" || signalName === "destroyed(QObject*)")
-                        return;
-
-                    // and otherwise we only need to be connected only once
-                    if (this.__objectSignals__[signalIndex].length == 1) {
-                        this.webChannel.exec({
-                            type: QWebChannelMessageTypes.connectToSignal,
-                            object: this.__id__,
-                            signal: signalIndex
-                        });
-                    }
-                },
-                disconnect: (callback: any) => {
-                    if (typeof (callback) !== "function") {
-                        PluginLogger.logError("Bad callback given to disconnect from signal " + signalName);
-                        return;
-                    }
-                    // This makes a new list. This is important because it won't interfere with
-                    // signal processing if a disconnection happens while emittig a signal
-                    this.__objectSignals__[signalIndex] = (this.__objectSignals__[signalIndex] || []).filter((c: any) => {
-                        return c != callback;
-                    });
-                    if (!isPropertyNotifySignal && this.__objectSignals__[signalIndex].length === 0) {
-                        // only required for "pure" signals, handled separately for properties in propertyUpdate
-                        this.webChannel.exec({
-                            type: QWebChannelMessageTypes.disconnectFromSignal,
-                            object: this.__id__,
-                            signal: signalIndex
-                        });
-                    }
+        const signalName = signalData[0];
+        const signalIndex = signalData[1];
+        this[signalName] = {
+            connect: (callback: any) => {
+                if (typeof(callback) !== "function") {
+                    PluginLogger.logError(`Bad callback given to connect to signal ${signalName}`);
+                    return;
                 }
-            };
-        }
+
+                this.__objectSignals__[signalIndex] = this.__objectSignals__[signalIndex] || [];
+                this.__objectSignals__[signalIndex].push(callback);
+
+                // only required for "pure" signals, handled separately for properties in propertyUpdate
+                if (isPropertyNotifySignal)
+                    return;
+
+                // also note that we always get notified about the destroyed signal
+                if (signalName === "destroyed" || signalName === "destroyed()" || signalName === "destroyed(QObject*)")
+                    return;
+
+                // and otherwise we only need to be connected only once
+                if (this.__objectSignals__[signalIndex].length == 1) {
+                    this.webChannel.exec({
+                        type: QWebChannelMessageTypes.connectToSignal,
+                        object: this.__id__,
+                        signal: signalIndex
+                    });
+                }
+            },
+            disconnect: (callback: any) => {
+                if (typeof (callback) !== "function") {
+                    PluginLogger.logError(`Bad callback given to disconnect from signal ${signalName}`);
+                    return;
+                }
+                // This makes a new list. This is important because it won't interfere with
+                // signal processing if a disconnection happens while emittig a signal
+                this.__objectSignals__[signalIndex] = (this.__objectSignals__[signalIndex] || []).filter((c: any) => {
+                    return c != callback;
+                });
+                if (!isPropertyNotifySignal && this.__objectSignals__[signalIndex].length === 0) {
+                    // only required for "pure" signals, handled separately for properties in propertyUpdate
+                    this.webChannel.exec({
+                        type: QWebChannelMessageTypes.disconnectFromSignal,
+                        object: this.__id__,
+                        signal: signalIndex
+                    });
+                }
+            }
+        };
+    }
 
     unwrapQObject(response: any): any {
-            for (const converter of this.webChannel.usedConverters) {
-                let result = converter(response);
-                if (result !== undefined)
-                    return result;
-            }
-
-            if (response instanceof Array) {
-                // support list of objects
-                return response.map(qobj => this.unwrapQObject(qobj));
-            }
-            if (!(response instanceof Object))
-                return response;
-
-            if (!response["__QObject*__"] || response.id === undefined) {
-                let jObj: any = {};
-                for (const propName of Object.keys(response)) {
-                    jObj[propName] = this.unwrapQObject(response[propName]);
-                }
-                return jObj;
-            }
-
-            let objectId = response.id;
-            if (this.webChannel.objects[objectId])
-                return this.webChannel.objects[objectId];
-
-            if (!response.data) {
-                PluginLogger.logError("Cannot unwrap unknown QObject " + objectId + " without data.");
-                return;
-            }
-
-            let qObject = new QObject(objectId, response.data, this.webChannel);
-            qObject.destroyed.connect(() => {
-                if (this.webChannel.objects[objectId] === qObject) {
-                    delete this.webChannel.objects[objectId];
-                    // reset the now deleted QObject to an empty {} object
-                    // just assigning {} though would not have the desired effect, but the
-                    // below also ensures all external references will see the empty map
-                    // NOTE: this detour is necessary to workaround QTBUG-40021
-                    Object.keys(qObject).forEach(name => delete qObject[name]);
-                }
-            });
-            // here we are already initialized, and thus must directly unwrap the properties
-            qObject.unwrapProperties();
-            return qObject;
+        for (const converter of this.webChannel.usedConverters) {
+            const result = converter(response);
+            if (result !== undefined)
+                return result;
         }
+
+        if (response instanceof Array) {
+            // support list of objects
+            return response.map(qobj => this.unwrapQObject(qobj));
+        }
+        if (!(response instanceof Object))
+            return response;
+
+        if (!response["__QObject*__"] || response.id === undefined) {
+            const jObj: any = {};
+            for (const propName of Object.keys(response)) {
+                jObj[propName] = this.unwrapQObject(response[propName]);
+            }
+            return jObj;
+        }
+
+        const objectId = response.id;
+        if (this.webChannel.objects[objectId])
+            return this.webChannel.objects[objectId];
+
+        if (!response.data) {
+            PluginLogger.logError(`Cannot unwrap unknown QObject ${objectId} without data.`);
+            return;
+        }
+
+        const qObject = new QObject(objectId, response.data, this.webChannel);
+        qObject.destroyed.connect(() => {
+            if (this.webChannel.objects[objectId] === qObject) {
+                delete this.webChannel.objects[objectId];
+                // reset the now deleted QObject to an empty {} object
+                // just assigning {} though would not have the desired effect, but the
+                // below also ensures all external references will see the empty map
+                // NOTE: this detour is necessary to workaround QTBUG-40021
+                Object.keys(qObject).forEach(name => delete qObject[name]);
+            }
+        });
+        // here we are already initialized, and thus must directly unwrap the properties
+        qObject.unwrapProperties();
+        return qObject;
+    }
 
     /**
      * Invokes all callbacks for the given signalname. Also works for property notify callbacks.
      */
-    private invokeSignalCallbacks(signalName: string, ...signalArgs: any[]) {
-        let connections = this.__objectSignals__[signalName];
+    private invokeSignalCallbacks(signalName: string, signalArgs: any) {
+        const connections = this.__objectSignals__[signalName];
         if (connections) {
-            connections.forEach((callback: { apply: (...args: any[]) => void; }) => {
+            connections.forEach((callback: any) => {
                 callback.apply(callback, signalArgs);
             });
         }
     }
 
-    signalEmitted(signalName: string, ...signalArgs: any[]) {
+    signalEmitted(signalName: string, signalArgs: any) {
         this.invokeSignalCallbacks(signalName, this.unwrapQObject(signalArgs));
     }
 

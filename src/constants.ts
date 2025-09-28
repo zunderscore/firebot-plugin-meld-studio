@@ -3,6 +3,8 @@ export const PLUGIN_NAME = "Meld Studio";
 
 export const VARIABLE_PREFIX = PLUGIN_ID;
 
+export const FILTER_PREFIX = PLUGIN_ID;
+
 export const EVENT_SOURCE_ID = PLUGIN_ID;
 
 export const CONNECTED_EVENT_ID = "connected";
@@ -15,7 +17,7 @@ export const SCENE_CHANGED_EVENT_ID = "scene-changed";
 export const STAGED_SCENE_CHANGED_EVENT_ID = "staged-scene-changed";
 export const TRACK_MUTED_EVENT_ID = "track-muted";
 export const TRACK_UNMUTED_EVENT_ID = "track-unmuted";
-export const TRACK_GAIN_CHANGED_EVENT_ID = "track-gain-changed";
+export const TRACK_VOLUME_CHANGED_EVENT_ID = "track-volume-changed";
 
 export const GET_CONNECTED_FRONTEND_COMMAND = `${PLUGIN_ID}:get-connected`;
 export const GET_SCENE_LIST_FRONTEND_COMMAND = `${PLUGIN_ID}:get-scene-list`;

@@ -11,7 +11,7 @@ interface EffectSource {
     action: "toggle" | boolean
 }
 
-export const ToggleMuteTrackEffect: Effects.EffectType<{
+export const ToggleTrackMuteEffect: Effects.EffectType<{
     selectedSources: Array<EffectSource>
 }> = {
     definition: {

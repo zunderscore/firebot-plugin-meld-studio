@@ -169,9 +169,9 @@ type MeldStudio = {
     toggleMute: (trackId: string) => void;
 
     /**
-     * Adjusts the gain for an audio track
+     * Adjusts the gain/volume for an audio track
      * @param trackId ID of the track
-     * @param level Gain level
+     * @param level Gain/volume level
      */
     setGain: (trackId: string, level: number) => void;
 
@@ -237,7 +237,7 @@ type MeldStudio = {
     };
 
     /**
-     * When the gain or mute status of a track has changed
+     * When the gain/volume or mute status of a track has changed
      */
     gainUpdated: {
         /**
