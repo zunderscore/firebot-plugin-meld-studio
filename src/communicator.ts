@@ -4,6 +4,7 @@ import {
     GET_SCENE_LIST_FRONTEND_COMMAND,
     GET_LAYER_LIST_FRONTEND_COMMAND,
     GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND,
+    GET_TRACK_LIST_FRONTEND_COMMAND,
     GET_IMAGE_LAYERS_FRONTEND_COMMAND,
     GET_MEDIA_LAYERS_FRONTEND_COMMAND,
     GET_BROWSER_LAYERS_FRONTEND_COMMAND,
@@ -47,6 +48,10 @@ export function registerFrontendListeners(
 
     registerFrontendListener(frontendCommunicator, GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND,
         (sceneId) => MeldRemote.getSessionItems("layer").filter(l => l.parent === sceneId)
+    );
+
+    registerFrontendListener(frontendCommunicator, GET_TRACK_LIST_FRONTEND_COMMAND,
+        () => MeldRemote.getSessionItems("track")
     );
 
     registerFrontendListener(frontendCommunicator, GET_IMAGE_LAYERS_FRONTEND_COMMAND,

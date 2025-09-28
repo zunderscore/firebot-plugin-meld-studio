@@ -21,6 +21,7 @@ export const GET_CONNECTED_FRONTEND_COMMAND = `${PLUGIN_ID}:get-connected`;
 export const GET_SCENE_LIST_FRONTEND_COMMAND = `${PLUGIN_ID}:get-scene-list`;
 export const GET_LAYER_LIST_FRONTEND_COMMAND = `${PLUGIN_ID}:get-layer-list`;
 export const GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND = `${PLUGIN_ID}:get-layer-list-for-scene`;
+export const GET_TRACK_LIST_FRONTEND_COMMAND = `${PLUGIN_ID}:get-track-list`;
 export const GET_IMAGE_LAYERS_FRONTEND_COMMAND = `${PLUGIN_ID}:get-image-layers`;
 export const GET_MEDIA_LAYERS_FRONTEND_COMMAND = `${PLUGIN_ID}:get-media-layers`;
 export const GET_BROWSER_LAYERS_FRONTEND_COMMAND = `${PLUGIN_ID}:get-browser-layers`;

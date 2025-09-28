@@ -305,6 +305,38 @@ class MeldRemote {
         this.meld.showStagedScene();
     }
 
+    setTrackMuteById(trackId: string, mute: "toggle" | boolean = true): void {
+        PluginLogger.logDebug(`${mute === true ? "Muting" : "Unmuting"} track with ID ${trackId}`);
+        const track = this.getSessionItems("track").find(s => s.id === trackId);
+
+        if (!track) {
+            PluginLogger.logWarn(`Cannot find track with ID ${trackId}`);
+            return;
+        }
+
+        if (mute === "toggle") {
+            this.meld.toggleMute(track.id);
+        } else {
+            this.meld.setMuted(track.id, mute);
+        }
+    }
+
+    setTrackMuteByName(trackName: string, mute: "toggle" | boolean = true): void {
+        PluginLogger.logDebug(`${mute === true ? "Muting" : "Unmuting"} track ${trackName}`);
+        const track = this.getSessionItems("track").find(s => s.name === trackName);
+
+        if (!track) {
+            PluginLogger.logWarn(`Cannot find track named ${trackName}`);
+            return;
+        }
+
+        if (mute === "toggle") {
+            this.meld.toggleMute(track.id);
+        } else {
+            this.meld.setMuted(track.id, mute);
+        }
+    }
+
     playMediaLayer(layerId: string) {
         PluginLogger.logDebug(`Playing media on layer ID ${layerId}`);
         this.meld.callFunction(layerId, "play");
