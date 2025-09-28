@@ -30,7 +30,7 @@ New effects:
 - **Meld Studio: Show Replay**
 - **Meld Studio: Dismiss Replay**
 - **Meld Studio: Toggle Layer Visibility**
-- **Meld Studio: Toggle Track Mute**
+- **Meld Studio: Toggle Audio Track Mute**
 - **Meld Studio: Toggle Virtual Camera**
 
 ## Events
@@ -44,15 +44,15 @@ New events:
 - **Meld Studio: Recording Stopped**
 - **Meld Studio: Scene Changed**
 - **Meld Studio: Staged Scene Changed**
-- **Meld Studio: Track Muted**
-- **Meld Studio: Track Unmuted**
-- **Meld Studio: Track Volume Changed**
+- **Meld Studio: Audio Track Muted**
+- **Meld Studio: Audio Track Unmuted**
+- **Meld Studio: Audio Track Volume Changed**
 
 ## Event Filters
 
 New filters:
 - **Meld Studio Scene Name**
-- **Meld Studio Track Name**
+- **Meld Studio Audio Track Name**
 
 ## Variables
 

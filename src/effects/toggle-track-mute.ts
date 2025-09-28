@@ -16,8 +16,8 @@ export const ToggleTrackMuteEffect: Effects.EffectType<{
 }> = {
     definition: {
         id: `${PLUGIN_ID}:toggle-track-mute`,
-        name: `${PLUGIN_NAME}: Toggle Track Mute`,
-        description: "Toggle a track's muted status in Meld Studio",
+        name: `${PLUGIN_NAME}: Toggle Audio Track Mute`,
+        description: "Toggle an audio track's muted status in Meld Studio",
         icon: "fad fa-volume-mute",
         categories: ["common"]
     },
@@ -34,7 +34,7 @@ export const ToggleTrackMuteEffect: Effects.EffectType<{
             <div ng-repeat="tracks in missingSources track by $index">
                 <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
                     <div class="pl-5">
-                        <span>Track: {{tracks.trackName}}</span>
+                        <span>Audio Track: {{tracks.trackName}}</span>
                     </div>   
                     <div>
                         <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>

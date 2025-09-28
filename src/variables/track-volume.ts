@@ -8,7 +8,7 @@ import {
 export const TrackVolumeVariable: ReplaceVariable = {
     definition: {
         handle: `${VARIABLE_PREFIX}TrackVolume`,
-        description: "The new volume level of the track in Meld Studio.",
+        description: "The new volume level of the audio track in Meld Studio.",
         possibleDataOutput: [ "number" ],
         categories: [ "common" ],
         triggers: {

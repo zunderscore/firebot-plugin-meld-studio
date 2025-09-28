@@ -61,18 +61,18 @@ export const MeldEventSource: EventSource = {
         },
         {
             id: TRACK_MUTED_EVENT_ID,
-            name: `${PLUGIN_NAME}: Track Muted`,
-            description: "When a track is muted in Meld Studio"
+            name: `${PLUGIN_NAME}: Audio Track Muted`,
+            description: "When an audio track is muted in Meld Studio"
         },
         {
             id: TRACK_UNMUTED_EVENT_ID,
-            name: `${PLUGIN_NAME}: Track Unmuted`,
-            description: "When a track is unmuted in Meld Studio"
+            name: `${PLUGIN_NAME}: Audio Track Unmuted`,
+            description: "When an audio track is unmuted in Meld Studio"
         },
         {
             id: TRACK_VOLUME_CHANGED_EVENT_ID,
-            name: `${PLUGIN_NAME}: Track Volume Changed`,
-            description: "When a track's volume changes in Meld Studio"
+            name: `${PLUGIN_NAME}: Audio Track Volume Changed`,
+            description: "When an audio track's volume changes in Meld Studio"
         },
     ]
 }

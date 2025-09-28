@@ -9,8 +9,8 @@ import {
 
 export const TrackNameFilter: EventFilter = {
     id: `${FILTER_PREFIX}:track-name`,
-    name: "Meld Studio Track Name",
-    description: "Filter on the name of the Meld Studio track that triggered the event",
+    name: "Meld Studio Audio Track Name",
+    description: "Filter on the name of the Meld Studio audio track that triggered the event",
     events: [
         { eventSourceId: EVENT_SOURCE_ID, eventId: TRACK_MUTED_EVENT_ID },
         { eventSourceId: EVENT_SOURCE_ID, eventId: TRACK_UNMUTED_EVENT_ID },

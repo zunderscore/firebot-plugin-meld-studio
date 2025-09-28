@@ -10,7 +10,7 @@ import {
 export const TrackNameVariable: ReplaceVariable = {
     definition: {
         handle: `${VARIABLE_PREFIX}TrackName`,
-        description: "The name of the track that triggered the event in Meld Studio.",
+        description: "The name of the audio track that triggered the event in Meld Studio.",
         possibleDataOutput: [ "text" ],
         categories: [ "common" ],
         triggers: {
