@@ -25,13 +25,13 @@ New effects:
 - **Meld Studio: Show Scene**
 - **Meld Studio: Stage Scene**
 - **Meld Studio: Show Staged Scene**
+- **Meld Studio: Toggle Layer Visibility**
+- **Meld Studio: Toggle Audio Track Mute**
+- **Meld Studio: Toggle Virtual Camera**
 - **Meld Studio: Record Clip**
 - **Meld Studio: Take Screenshot**
 - **Meld Studio: Show Replay**
 - **Meld Studio: Dismiss Replay**
-- **Meld Studio: Toggle Layer Visibility**
-- **Meld Studio: Toggle Audio Track Mute**
-- **Meld Studio: Toggle Virtual Camera**
 
 ## Events
 
