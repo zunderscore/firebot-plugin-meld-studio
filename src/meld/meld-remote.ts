@@ -307,6 +307,11 @@ class MeldRemote {
         this.meld.toggleLayer(sceneId, layerId);
     }
 
+    setLayerVisibility(layerId: string, visible = true): void {
+        PluginLogger.logDebug(`${visible === true  ? "Showing" : "Hiding"} layer ID ${layerId}`);
+        this.meld.setProperty(layerId, "visible", visible);
+    }
+
     playMediaLayer(layerId: string): void {
         PluginLogger.logDebug(`Playing media on layer ID ${layerId}`);
         this.meld.callFunction(layerId, "play");
@@ -367,8 +372,10 @@ class MeldRemote {
         track: MeldStudioSessionTrackWithId,
         monitor: boolean | "toggle"
     ): void {
-        if (monitor === "toggle" || monitor !== track.monitoring) {
+        if (monitor === "toggle") {
             this.meld.toggleMonitor(track.id);
+        } else {
+            this._setObjectProperty(track.id, "monitoring", monitor);
         }
     }
 
@@ -432,12 +439,7 @@ class MeldRemote {
         this.meld.sendCommand("meld.replay.dismiss");
     }
 
-    setObjectVisibility(objectId: string, visible = true): void {
-        PluginLogger.logDebug(`${visible === true  ? "Showing" : "Hiding"} object ${objectId}`);
-        this.meld.setProperty(objectId, "visible", visible);
-    }
-
-    setObjectProperty(objectId: string, propertyName: string, value: any): void {
+    private _setObjectProperty(objectId: string, propertyName: string, value: any): void {
         PluginLogger.logDebug(`Setting object ${objectId} property ${propertyName} to ${value}`);
         this.meld.setProperty(objectId, propertyName, value);
     }

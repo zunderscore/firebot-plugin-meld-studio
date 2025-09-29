@@ -22,6 +22,9 @@ export const TakeScreenshotEffect: Effects.EffectType<{
             label="Vertical"
             tooltip="Whether or not you want to take a screenshot of the vertical canvas."
         />
+        <div ng-if="effect.vertical === true" class="muted">
+            Note: If there are no vertical scenes, the screenshot will be standard landscape orientation.
+        </div>
     </eos-container>
     `,
     optionsController: ($scope) => {

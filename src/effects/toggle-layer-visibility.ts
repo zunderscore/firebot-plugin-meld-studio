@@ -235,7 +235,7 @@ export const ToggleLayerVisibilityEffect: Effects.EffectType<{
             if (layer.action === "toggle") {
                 MeldRemote.toggleLayerVisibility(layer.sceneId, layer.layerId);
             } else {
-                MeldRemote.setObjectVisibility(layer.layerId, layer.action);
+                MeldRemote.setLayerVisibility(layer.layerId, layer.action);
             }
         }
 
