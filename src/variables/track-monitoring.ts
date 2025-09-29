@@ -2,29 +2,23 @@ import { ReplaceVariable } from "@crowbartools/firebot-custom-scripts-types/type
 import {
     VARIABLE_PREFIX,
     EVENT_SOURCE_ID,
-    TRACK_MUTED_EVENT_ID,
-    TRACK_UNMUTED_EVENT_ID,
-    TRACK_VOLUME_CHANGED_EVENT_ID,
     TRACK_MONITORING_CHANGED_EVENT_ID,
 } from "../constants";
 
-export const TrackNameVariable: ReplaceVariable = {
+export const TrackMonitoringVariable: ReplaceVariable = {
     definition: {
-        handle: `${VARIABLE_PREFIX}TrackName`,
-        description: "The name of the audio track that triggered the event in Meld Studio.",
+        handle: `${VARIABLE_PREFIX}TrackMonitoring`,
+        description: "`true` if the audio track is being monitored in Meld Studio, or `false` otherwise.",
         possibleDataOutput: [ "text" ],
         categories: [ "common" ],
         triggers: {
             event: [
-                `${EVENT_SOURCE_ID}:${TRACK_MUTED_EVENT_ID}`,
-                `${EVENT_SOURCE_ID}:${TRACK_UNMUTED_EVENT_ID}`,
-                `${EVENT_SOURCE_ID}:${TRACK_VOLUME_CHANGED_EVENT_ID}`,
                 `${EVENT_SOURCE_ID}:${TRACK_MONITORING_CHANGED_EVENT_ID}`,
             ],
             manual: true
         }
     },
     evaluator: async (trigger) => {
-        return trigger.metadata.eventData.trackName;
+        return trigger.metadata.eventData.trackMonitoring ?? false;
     }
 };

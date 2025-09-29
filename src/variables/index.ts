@@ -8,6 +8,7 @@ import { StagedSceneNameVariable } from "./staged-scene-name";
 import { TrackVolumeVariable } from "./track-volume";
 import { TrackIdVariable } from "./track-id";
 import { TrackNameVariable } from "./track-name";
+import { TrackMonitoringVariable } from "./track-monitoring";
 
 export const MeldVariables = [
     IsConnectedVariable,
@@ -18,6 +19,7 @@ export const MeldVariables = [
     StagedSceneIdVariable,
     StagedSceneNameVariable,
     TrackIdVariable,
+    TrackMonitoringVariable,
     TrackNameVariable,
     TrackVolumeVariable
 ]

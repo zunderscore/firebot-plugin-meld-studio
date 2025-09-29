@@ -5,6 +5,7 @@ import {
     TRACK_MUTED_EVENT_ID,
     TRACK_UNMUTED_EVENT_ID,
     TRACK_VOLUME_CHANGED_EVENT_ID,
+    TRACK_MONITORING_CHANGED_EVENT_ID,
 } from "../constants";
 
 export const TrackIdVariable: ReplaceVariable = {
@@ -18,6 +19,7 @@ export const TrackIdVariable: ReplaceVariable = {
                 `${EVENT_SOURCE_ID}:${TRACK_MUTED_EVENT_ID}`,
                 `${EVENT_SOURCE_ID}:${TRACK_UNMUTED_EVENT_ID}`,
                 `${EVENT_SOURCE_ID}:${TRACK_VOLUME_CHANGED_EVENT_ID}`,
+                `${EVENT_SOURCE_ID}:${TRACK_MONITORING_CHANGED_EVENT_ID}`,
             ],
             manual: true
         }

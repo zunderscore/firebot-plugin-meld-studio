@@ -10,6 +10,7 @@ import { StopRecordingEffect } from "./stop-recording";
 import { StopStreamingEffect } from "./stop-streaming";
 import { TakeScreenshotEffect } from "./take-screenshot";
 import { ToggleLayerVisibilityEffect } from "./toggle-layer-visibility";
+import { ToggleTrackMonitorEffect } from "./toggle-track-monitor";
 import { ToggleTrackMuteEffect } from "./toggle-track-mute";
 import { ToggleVirtualCameraEffect } from "./toggle-virtual-camera";
 
@@ -26,6 +27,7 @@ export const MeldEffects = [
     StopStreamingEffect,
     TakeScreenshotEffect,
     ToggleLayerVisibilityEffect,
+    ToggleTrackMonitorEffect,
     ToggleTrackMuteEffect,
     ToggleVirtualCameraEffect
 ]

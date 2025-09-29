@@ -147,7 +147,6 @@ type MeldStudio = {
      * Toggles visibility of a layer within a scene
      * @param sceneId ID of the scene
      * @param layerId ID of the layer
-     * @returns 
      */
     toggleLayer: (sceneId: string, layerId: string) => void;
 
@@ -182,7 +181,6 @@ type MeldStudio = {
     /**
      * Toggles monitoring status of an audio track
      * @param trackId 
-     * @returns 
      */
     toggleMonitor: (trackId: string) => void;
 

@@ -27,6 +27,7 @@ New effects:
 - **Meld Studio: Show Staged Scene**
 - **Meld Studio: Toggle Layer Visibility**
 - **Meld Studio: Toggle Audio Track Mute**
+- **Meld Studio: Toggle Audio Track Monitoring**
 - **Meld Studio: Toggle Virtual Camera**
 - **Meld Studio: Record Clip**
 - **Meld Studio: Take Screenshot**
@@ -47,6 +48,7 @@ New events:
 - **Meld Studio: Audio Track Muted**
 - **Meld Studio: Audio Track Unmuted**
 - **Meld Studio: Audio Track Volume Changed**
+- **Meld Studio: Audio Track Monitoring Changed**
 
 ## Event Filters
 
@@ -65,5 +67,6 @@ New variables:
 - `$meldStagedSceneId`
 - `$meldStagedSceneName`
 - `$meldTrackId`
+- `$meldTrackMonitoring`
 - `$meldTrackName`
 - `$meldTrackVolume`

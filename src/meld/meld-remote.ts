@@ -15,6 +15,7 @@ import {
     TRACK_MUTED_EVENT_ID,
     TRACK_UNMUTED_EVENT_ID,
     TRACK_VOLUME_CHANGED_EVENT_ID,
+    TRACK_MONITORING_CHANGED_EVENT_ID,
 } from "../constants";
 
 interface RemoteParams {
@@ -131,21 +132,35 @@ class MeldRemote {
                 )
             }
 
-            // Check for muted/unmuted tracks
+            // Check for track updates
             for (const track of newSessionObject.filter(t => t.type === "track"))
             {
                 const existingTrack = this._cachedSessionItems
                     .find(t => t.id === track.id) as MeldStudioSessionTrackWithId;
                 
-                if (existingTrack && existingTrack.muted !== track.muted) {
-                    this._eventManager.triggerEvent(
-                        EVENT_SOURCE_ID,
-                        track.muted === true ? TRACK_MUTED_EVENT_ID : TRACK_UNMUTED_EVENT_ID,
-                        {
-                            trackName: track.name,
-                            trackId: track.id
-                        }
-                    )
+                if (existingTrack) {
+                    if (existingTrack.muted !== track.muted) {
+                        this._eventManager.triggerEvent(
+                            EVENT_SOURCE_ID,
+                            track.muted === true ? TRACK_MUTED_EVENT_ID : TRACK_UNMUTED_EVENT_ID,
+                            {
+                                trackName: track.name,
+                                trackId: track.id
+                            }
+                        );
+                    }
+
+                    if (existingTrack.monitoring !== track.monitoring) {
+                        this._eventManager.triggerEvent(
+                            EVENT_SOURCE_ID,
+                            TRACK_MONITORING_CHANGED_EVENT_ID,
+                            {
+                                trackName: track.name,
+                                trackId: track.id,
+                                trackMonitoring: track.monitoring
+                            }
+                        );
+                    }
                 }
             }
 
@@ -173,7 +188,7 @@ class MeldRemote {
 
         this.meld.gainUpdated.connect((trackId, gain, muted) => {
             PluginLogger.logDebug("Received GainUpdated event from Meld");
-            const track = this.getSessionItems("track").find(t => t.id === trackId);
+            const track = this.getAllTracks().find(t => t.id === trackId);
 
             this._eventManager.triggerEvent(
                 EVENT_SOURCE_ID,
@@ -196,6 +211,8 @@ class MeldRemote {
         this._port = port;
     }
 
+    // ------------- STREAM ---------------
+
     startStreaming(): void {
         PluginLogger.logDebug("Starting streaming");
         this.meld.sendCommand("meld.startStreamingAction");
@@ -210,6 +227,8 @@ class MeldRemote {
         PluginLogger.logDebug("Toggling streaming state");
         this.meld.sendCommand("meld.toggleStreamingAction");
     }
+
+    // ------------- RECORD ---------------
 
     startRecording(): void {
         PluginLogger.logDebug("Starting recording");
@@ -226,8 +245,165 @@ class MeldRemote {
         this.meld.sendCommand("meld.toggleRecordingAction");
     }
 
+    // ------------- SCENES ---------------
+
+    showSceneById(sceneId: string): void {
+        PluginLogger.logDebug(`Showing scene with ID ${sceneId}`);
+        const scene = this.getAllScenes().find(s => s.id === sceneId);
+
+        if (!scene) {
+            PluginLogger.logWarn(`Cannot find scene with ID ${sceneId}`);
+            return;
+        }
+
+        this.meld.showScene(scene.id);
+    }
+
+    showSceneByName(sceneName: string): void {
+        PluginLogger.logDebug(`Showing scene ${sceneName}`);
+        const scene = this.getAllScenes().find(s => s.name === sceneName);
+
+        if (!scene) {
+            PluginLogger.logWarn(`Cannot find scene named ${sceneName}`);
+            return;
+        }
+
+        this.meld.showScene(scene.id);
+    }
+
+    stageSceneById(sceneId: string): void {
+        PluginLogger.logDebug(`Staging scene with ID ${sceneId}`);
+        const scene = this.getAllScenes().find(s => s.id === sceneId);
+
+        if (!scene) {
+            PluginLogger.logWarn(`Cannot find scene with ID ${sceneId}`);
+            return;
+        }
+
+        this.meld.setStagedScene(scene.id);
+    }
+
+    stageSceneByName(sceneName: string): void {
+        PluginLogger.logDebug(`Staging scene ${sceneName}`);
+        const scene = this.getAllScenes().find(s => s.name === sceneName);
+
+        if (!scene) {
+            PluginLogger.logWarn(`Cannot find scene named ${sceneName}`);
+            return;
+        }
+
+        this.meld.setStagedScene(scene.id);
+    }
+
+    showStagedScene(): void {
+        PluginLogger.logDebug("Showing staged scene");
+        this.meld.showStagedScene();
+    }
+    
+    // ------------- LAYERS ---------------
+
+    toggleLayerVisibility(sceneId: string, layerId: string): void {
+        PluginLogger.logDebug(`Toggling visibility for layer ID ${layerId} in scene ID ${sceneId}`);
+        this.meld.toggleLayer(sceneId, layerId);
+    }
+
+    playMediaLayer(layerId: string): void {
+        PluginLogger.logDebug(`Playing media on layer ID ${layerId}`);
+        this.meld.callFunction(layerId, "play");
+    }
+
+    pauseMediaLayer(layerId: string): void {
+        PluginLogger.logDebug(`Pausing media on layer ID ${layerId}`);
+        this.meld.callFunction(layerId, "pause");
+    }
+
+    seekMediaLayer(layerId: string, seconds: number): void {
+        PluginLogger.logDebug(`Seeking media on layer ID ${layerId} to ${seconds} seconds`);
+        this.meld.callFunctionWithArgs(layerId, "seek", [seconds]);
+    }
+
+    // ------------- AUDIO TRACKS ---------------
+
+    private _setTrackMute(
+        track: MeldStudioSessionTrackWithId,
+        mute: boolean | "toggle"
+    ): void {
+        if (mute === "toggle") {
+            this.meld.toggleMute(track.id);
+        } else {
+            this.meld.setMuted(track.id, mute);
+        }
+    }
+
+    setTrackMuteById(trackId: string, mute: boolean | "toggle" = true): void {
+        PluginLogger.logDebug(`${mute === "toggle"
+            ? "Toggling mute for"
+            : (mute === true ? "Muting" : "Unmuting")} track with ID ${trackId}`);
+        const track = this.getAllTracks().find(s => s.id === trackId);
+
+        if (!track) {
+            PluginLogger.logWarn(`Cannot find track with ID ${trackId}`);
+            return;
+        }
+
+        this._setTrackMute(track, mute);
+    }
+
+    setTrackMuteByName(trackName: string, mute: boolean | "toggle" = true): void {
+        PluginLogger.logDebug(`${mute === "toggle"
+            ? "Toggling mute for"
+            : (mute === true ? "Muting" : "Unmuting")} track ${trackName}`);
+        const track = this.getAllTracks().find(s => s.name === trackName);
+
+        if (!track) {
+            PluginLogger.logWarn(`Cannot find track named ${trackName}`);
+            return;
+        }
+
+        this._setTrackMute(track, mute);
+    }
+
+    private _setTrackMonitor(
+        track: MeldStudioSessionTrackWithId,
+        monitor: boolean | "toggle"
+    ): void {
+        if (monitor === "toggle" || monitor !== track.monitoring) {
+            this.meld.toggleMonitor(track.id);
+        }
+    }
+
+    setTrackMonitoringById(trackId: string, monitor: boolean | "toggle"): void {
+        PluginLogger.logDebug(`${monitor === "toggle"
+            ? "Toggling"
+            : (monitor === true ? "Enabling" : "Disabling")} monitoring on track with ID ${trackId}`);
+        const track = this.getAllTracks().find(s => s.id === trackId);
+
+        if (!track) {
+            PluginLogger.logWarn(`Cannot find track with ID ${trackId}`);
+            return;
+        }
+
+        this._setTrackMonitor(track, monitor);
+    }
+
+    setTrackMonitoringByName(trackName: string, monitor: boolean | "toggle"): void {
+        PluginLogger.logDebug(`${monitor === "toggle"
+            ? "Toggling"
+            : (monitor === true ? "Enabling" : "Disabling")} monitoring on track ${trackName}`);
+        const track = this.getAllTracks().find(s => s.name === trackName);
+
+        if (!track) {
+            PluginLogger.logWarn(`Cannot find track named ${trackName}`);
+            return;
+        }
+
+        this._setTrackMonitor(track, monitor);
+    }
+
+    // ------------- MISC ACTIONS ---------------
+
     takeScreenshot(vertical = false): void {
-        if (vertical === true) {
+        if (vertical === true && this.getAllScenes().some(s => s.vertical === true)) {
             PluginLogger.logDebug("Taking vertical screenshot");
             this.meld.sendCommand("meld.screenshot.vertical");
         } else {
@@ -256,122 +432,19 @@ class MeldRemote {
         this.meld.sendCommand("meld.replay.dismiss");
     }
 
-    showSceneById(sceneId: string): void {
-        PluginLogger.logDebug(`Showing scene with ID ${sceneId}`);
-        const scene = this.getSessionItems("scene").find(s => s.id === sceneId);
-
-        if (!scene) {
-            PluginLogger.logWarn(`Cannot find scene with ID ${sceneId}`);
-            return;
-        }
-
-        this.meld.showScene(scene.id);
-    }
-
-    showSceneByName(sceneName: string): void {
-        PluginLogger.logDebug(`Showing scene ${sceneName}`);
-        const scene = this.getSessionItems("scene").find(s => s.name === sceneName);
-
-        if (!scene) {
-            PluginLogger.logWarn(`Cannot find scene named ${sceneName}`);
-            return;
-        }
-
-        this.meld.showScene(scene.id);
-    }
-
-    stageSceneById(sceneId: string): void {
-        PluginLogger.logDebug(`Staging scene with ID ${sceneId}`);
-        const scene = this.getSessionItems("scene").find(s => s.id === sceneId);
-
-        if (!scene) {
-            PluginLogger.logWarn(`Cannot find scene with ID ${sceneId}`);
-            return;
-        }
-
-        this.meld.setStagedScene(scene.id);
-    }
-
-    stageSceneByName(sceneName: string): void {
-        PluginLogger.logDebug(`Staging scene ${sceneName}`);
-        const scene = this.getSessionItems("scene").find(s => s.name === sceneName);
-
-        if (!scene) {
-            PluginLogger.logWarn(`Cannot find scene named ${sceneName}`);
-            return;
-        }
-
-        this.meld.setStagedScene(scene.id);
-    }
-
-    showStagedScene(): void {
-        PluginLogger.logDebug("Showing staged scene");
-        this.meld.showStagedScene();
-    }
-
-    setTrackMuteById(trackId: string, mute: "toggle" | boolean = true): void {
-        PluginLogger.logDebug(`${mute === true ? "Muting" : "Unmuting"} track with ID ${trackId}`);
-        const track = this.getSessionItems("track").find(s => s.id === trackId);
-
-        if (!track) {
-            PluginLogger.logWarn(`Cannot find track with ID ${trackId}`);
-            return;
-        }
-
-        if (mute === "toggle") {
-            this.meld.toggleMute(track.id);
-        } else {
-            this.meld.setMuted(track.id, mute);
-        }
-    }
-
-    setTrackMuteByName(trackName: string, mute: "toggle" | boolean = true): void {
-        PluginLogger.logDebug(`${mute === true ? "Muting" : "Unmuting"} track ${trackName}`);
-        const track = this.getSessionItems("track").find(s => s.name === trackName);
-
-        if (!track) {
-            PluginLogger.logWarn(`Cannot find track named ${trackName}`);
-            return;
-        }
-
-        if (mute === "toggle") {
-            this.meld.toggleMute(track.id);
-        } else {
-            this.meld.setMuted(track.id, mute);
-        }
-    }
-
-    playMediaLayer(layerId: string) {
-        PluginLogger.logDebug(`Playing media on layer ID ${layerId}`);
-        this.meld.callFunction(layerId, "play");
-    }
-
-    pauseMediaLayer(layerId: string) {
-        PluginLogger.logDebug(`Pausing media on layer ID ${layerId}`);
-        this.meld.callFunction(layerId, "pause");
-    }
-
-    seekMediaLayer(layerId: string, seconds: number) {
-        PluginLogger.logDebug(`Seeking media on layer ID ${layerId} to ${seconds} seconds`);
-        this.meld.callFunctionWithArgs(layerId, "seek", [seconds]);
-    }
-
-    setObjectVisibility(objectId: string, visible = true) {
+    setObjectVisibility(objectId: string, visible = true): void {
         PluginLogger.logDebug(`${visible === true  ? "Showing" : "Hiding"} object ${objectId}`);
         this.meld.setProperty(objectId, "visible", visible);
     }
 
-    toggleLayerVisibility(sceneId: string, layerId: string): void {
-        PluginLogger.logDebug(`Toggling visibility for layer ID ${layerId} in scene ID ${sceneId}`);
-        this.meld.toggleLayer(sceneId, layerId);
-    }
-
-    setProperty(objectId: string, propertyName: string, value: any) {
+    setObjectProperty(objectId: string, propertyName: string, value: any): void {
         PluginLogger.logDebug(`Setting object ${objectId} property ${propertyName} to ${value}`);
         this.meld.setProperty(objectId, propertyName, value);
     }
 
-    getSessionItems(type?: MeldStudioSessionItemType): MeldStudioSessionItemWithId[] {
+    // ------------- GETTERS ---------------
+
+    private _getSessionItems(type?: MeldStudioSessionItemType): MeldStudioSessionItemWithId[] {
         const items = Object.entries(this.meld?.session?.items ?? {})
             .map((item) => ({
                 id: item[0],
@@ -385,44 +458,50 @@ class MeldRemote {
         return items;
     }
 
-    getImageSources(): MeldStudioSessionItemWithId[] {
-        return this.getSessionItems("layer")
-            .filter(i => (i as MeldStudioSessionLayer).source != null);
-    }
-
-    getMediaSources(): MeldStudioSessionItemWithId[] {
-        return this.getSessionItems("layer")
-            .filter(i => (i as MeldStudioSessionLayer).mediaSource != null);
-    }
-
-    getBrowserSources(): MeldStudioSessionItemWithId[] {
-        return this.getSessionItems("layer")
-            .filter(i => (i as MeldStudioSessionLayer).url != null);
+    getAllScenes(): MeldStudioSessionSceneWithId[] {
+        return this._getSessionItems("scene") as MeldStudioSessionSceneWithId[];
     }
 
     getActiveScene(): MeldStudioSessionSceneWithId {
-        return this.getSessionItems("scene")
-            .find(s => (s as MeldStudioSessionSceneWithId).current === true) as MeldStudioSessionSceneWithId;
+        return this.getAllScenes().find(s => s.current === true);
     }
 
     getStagedScene(): MeldStudioSessionSceneWithId {
-        return this.getSessionItems("scene")
-            .find(s => (s as MeldStudioSessionSceneWithId).staged === true) as MeldStudioSessionSceneWithId;
+        return this.getAllScenes().find(s => s.staged === true);
     }
 
     getScenesWithLayers(): MeldStudioSceneWithLayers[] {
-        const scenes = this.getSessionItems("scene") as MeldStudioSceneWithLayers[];
+        const scenes = this.getAllScenes() as MeldStudioSceneWithLayers[];
 
         for (const scene of scenes) {
-            scene.layers = this.getSceneLayers(scene.id);
+            scene.layers = this.getLayersForScene(scene.id);
         }
 
         return scenes;
     }
 
-    getSceneLayers(sceneId: string): MeldStudioSessionLayerWithId[] {
-        return this.getSessionItems("layer")
-            .filter(l => l.parent === sceneId) as MeldStudioSessionLayerWithId[];
+    getAllLayers(): MeldStudioSessionLayerWithId[] {
+        return this._getSessionItems("layer") as MeldStudioSessionLayerWithId[];
+    }
+
+    getLayersForScene(sceneId: string): MeldStudioSessionLayerWithId[] {
+        return this.getAllLayers().filter(l => l.parent === sceneId);
+    }
+
+    getImageSources(): MeldStudioSessionItemWithId[] {
+        return this.getAllLayers().filter(l => l.source != null);
+    }
+
+    getMediaSources(): MeldStudioSessionItemWithId[] {
+        return this.getAllLayers().filter(l => l.mediaSource != null);
+    }
+
+    getBrowserSources(): MeldStudioSessionItemWithId[] {
+        return this.getAllLayers().filter(l => l.url != null);
+    }
+
+    getAllTracks(): MeldStudioSessionTrackWithId[] {
+        return this._getSessionItems("track") as MeldStudioSessionTrackWithId[];
     }
 }
 

@@ -5,11 +5,10 @@ import {
     GET_SCENE_LIST_WITH_LAYERS_FRONTEND_COMMAND,
     GET_LAYER_LIST_FRONTEND_COMMAND,
     GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND,
-    GET_TRACK_LIST_FRONTEND_COMMAND,
+    GET_AUDIO_TRACK_LIST_FRONTEND_COMMAND,
     GET_IMAGE_LAYERS_FRONTEND_COMMAND,
     GET_MEDIA_LAYERS_FRONTEND_COMMAND,
     GET_BROWSER_LAYERS_FRONTEND_COMMAND,
-    GET_AUDIO_TRACKS_FRONTEND_COMMAND,
     GET_CONNECTED_FRONTEND_COMMAND,
 } from "./constants";
 
@@ -29,7 +28,8 @@ function registerAsyncFrontendListener(
     eventName: string,
     handler: (...args: any[]) => Promise<void>
 ) {
-
+    const id = frontendCommunicator.onAsync(eventName, handler);
+    registeredFrontendListeners.push({ id, eventName });
 }
 
 export function registerFrontendListeners(
@@ -40,7 +40,7 @@ export function registerFrontendListeners(
     );
 
     registerFrontendListener(frontendCommunicator, GET_SCENE_LIST_FRONTEND_COMMAND,
-        () => MeldRemote.getSessionItems("scene")
+        () => MeldRemote.getAllScenes()
     );
 
     registerFrontendListener(frontendCommunicator, GET_SCENE_LIST_WITH_LAYERS_FRONTEND_COMMAND,
@@ -48,15 +48,15 @@ export function registerFrontendListeners(
     );
 
     registerFrontendListener(frontendCommunicator, GET_LAYER_LIST_FRONTEND_COMMAND,
-        () => MeldRemote.getSessionItems("layer")
+        () => MeldRemote.getAllLayers()
     );
 
     registerFrontendListener(frontendCommunicator, GET_LAYER_LIST_FOR_SCENE_FRONTEND_COMMAND,
-        (sceneId) => MeldRemote.getSessionItems("layer").filter(l => l.parent === sceneId)
+        (sceneId) => MeldRemote.getAllLayers().filter(l => l.parent === sceneId)
     );
 
-    registerFrontendListener(frontendCommunicator, GET_TRACK_LIST_FRONTEND_COMMAND,
-        () => MeldRemote.getSessionItems("track")
+    registerFrontendListener(frontendCommunicator, GET_AUDIO_TRACK_LIST_FRONTEND_COMMAND,
+        () => MeldRemote.getAllTracks()
     );
 
     registerFrontendListener(frontendCommunicator, GET_IMAGE_LAYERS_FRONTEND_COMMAND,
@@ -69,10 +69,6 @@ export function registerFrontendListeners(
     
     registerFrontendListener(frontendCommunicator, GET_BROWSER_LAYERS_FRONTEND_COMMAND,
         () => MeldRemote.getBrowserSources()
-    );
-    
-    registerFrontendListener(frontendCommunicator, GET_AUDIO_TRACKS_FRONTEND_COMMAND,
-        () => MeldRemote.getSessionItems("track")
     );
 }
 

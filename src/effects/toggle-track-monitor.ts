@@ -11,14 +11,14 @@ interface EffectSource {
     action: boolean | "toggle";
 }
 
-export const ToggleTrackMuteEffect: Effects.EffectType<{
+export const ToggleTrackMonitorEffect: Effects.EffectType<{
     selectedSources: Array<EffectSource>
 }> = {
     definition: {
-        id: `${PLUGIN_ID}:toggle-track-mute`,
-        name: `${PLUGIN_NAME}: Toggle Audio Track Mute`,
-        description: "Toggle an audio track's muted status in Meld Studio",
-        icon: "fad fa-volume-mute",
+        id: `${PLUGIN_ID}:toggle-track-monitor`,
+        name: `${PLUGIN_NAME}: Toggle Audio Track Monitoring`,
+        description: "Toggle an audio track's monitoring status in Meld Studio",
+        icon: "fad fa-headphones-alt",
         categories: ["common"]
     },
     optionsTemplate: `
@@ -59,8 +59,8 @@ export const ToggleTrackMuteEffect: Effects.EffectType<{
                             {{getSourceActionDisplay(track)}} <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                            <li role="menuitem" ng-click="setSourceAction(track, true)"><a href>Mute</a></li>
-                            <li role="menuitem" ng-click="setSourceAction(track, false)"><a href>Unmute</a></li>
+                            <li role="menuitem" ng-click="setSourceAction(track, true)"><a href>Enable</a></li>
+                            <li role="menuitem" ng-click="setSourceAction(track, false)"><a href>Disable</a></li>
                             <li role="menuitem" ng-click="setSourceAction(track, 'toggle')"><a href>Toggle</a></li>
                         </ul>
                     </div>
@@ -131,9 +131,9 @@ export const ToggleTrackMuteEffect: Effects.EffectType<{
                 return "Toggle";
             }
             if (selectedSource.action === true) {
-                return "Mute";
+                return "Enable";
             }
-            return "Unmute";
+            return "Disable";
         };
 
         $scope.deleteSourceAtIndex = (index: number) => {
@@ -190,9 +190,9 @@ export const ToggleTrackMuteEffect: Effects.EffectType<{
 
         for (const { trackId, trackName, action } of effect.selectedSources) {
             if (trackId) {
-                MeldRemote.setTrackMuteById(trackId, action);
+                MeldRemote.setTrackMonitoringById(trackId, action);
             } else {
-                MeldRemote.setTrackMuteByName(trackName, action);
+                MeldRemote.setTrackMonitoringByName(trackName, action);
             }
         }
         return true;
