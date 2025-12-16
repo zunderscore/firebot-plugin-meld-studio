@@ -3,7 +3,7 @@
 This plugin adds support for controlling Meld Studio to [Firebot](https://firebot.app).
 
 ## Prerequisites
-- Firebot 5.65 or higher
+- Firebot 5.65 or higher with custom scripts enabled (**Settings** > **Advanced** > **Custom Scripts**)
 
 ## Setup
 
