@@ -1,4 +1,5 @@
 import { Firebot, ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
+import { Effects } from "@crowbartools/firebot-custom-scripts-types/types/effects";
 import { PluginLogger } from "./plugin-logger";
 import { MeldRemote } from "./meld/meld-remote";
 import { registerFrontendListeners, unregisterFrontendListeners } from "./communicator";
@@ -72,7 +73,7 @@ const script: Firebot.CustomScript<{
         
         PluginLogger.logDebug("Registering effects...");
         for (const effect of MeldEffects) {
-            effectManager.registerEffect(effect);
+            effectManager.registerEffect(effect as Effects.EffectType<unknown>);
         }
 
         PluginLogger.logDebug("Registering events...");
